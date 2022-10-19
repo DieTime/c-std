@@ -20,17 +20,15 @@ char *test_std_error_dump_formatter(const char **messages, size_t messages_count
 } /* namespace */
 
 TEST(std_error, new) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
 
     EXPECT_NE(error, nullptr);
     EXPECT_EQ(std_error_count(error), 1);
     EXPECT_STREQ(std_error_last(error), "hello");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, append) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
     std_error_t *updated = std_error_append(error, "world");
 
     EXPECT_EQ(error, updated);
@@ -39,12 +37,11 @@ TEST(std_error, append) {
     EXPECT_STREQ(std_error_last(error), "world");
 
     EXPECT_DEBUG_DEATH(std_error_append(nullptr, ""), ".*");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, get) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
@@ -54,34 +51,30 @@ TEST(std_error, get) {
 
     EXPECT_DEBUG_DEATH(std_error_get(error, 3), ".*");
     EXPECT_DEBUG_DEATH(std_error_get(nullptr, 0), ".*");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, first) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
     EXPECT_STREQ(std_error_first(error), "hello");
     EXPECT_DEBUG_DEATH(std_error_first(nullptr), ".*");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, last) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
     EXPECT_STREQ(std_error_last(error), "!!!");
     EXPECT_DEBUG_DEATH(std_error_last(nullptr), ".*");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, count) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
     EXPECT_EQ(std_error_count(error), 1);
 
     std_error_append(error, "world");
@@ -91,12 +84,10 @@ TEST(std_error, count) {
     EXPECT_EQ(std_error_count(error), 3);
 
     EXPECT_DEBUG_DEATH(std_error_count(nullptr), ".*");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, free) {
-    EXPECT_DEBUG_DEATH(std_error_free_safe(nullptr), ".*");
+    EXPECT_DEBUG_DEATH(std_error_free(nullptr), ".*");
 }
 
 TEST(std_error, free_safe) {
@@ -112,7 +103,8 @@ TEST(std_error, free_safe) {
 }
 
 TEST(std_error, log) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
@@ -124,12 +116,11 @@ TEST(std_error, log) {
                    "   - hello" "\n"
                    "   - world" "\n"
                    "   - !!!"   "\n");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, log_to) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
@@ -141,12 +132,11 @@ TEST(std_error, log_to) {
                    "   - hello" "\n"
                    "   - world" "\n"
                    "   - !!!"   "\n");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, log_formatted) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
@@ -157,28 +147,27 @@ TEST(std_error, log_formatted) {
     EXPECT_EQ(log, "hello" "\n"
                    "world" "\n"
                    "!!!"   "\n");
-
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, dump) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
     char *dump = std_error_dump(error);
 
-    EXPECT_STREQ(dump, "[error]" "\n"
+    EXPECT_STREQ(dump, "[error]"    "\n"
                        "   - hello" "\n"
                        "   - world" "\n"
                        "   - !!!"   "\n");
 
     free(dump);
-    std_error_free_safe(&error);
 }
 
 TEST(std_error, dump_formatted) {
-    std_error_t *error = std_error_new("hello");
+    std_unique_ptr(std_error_t) error = std_error_new("hello");
+
     std_error_append(error, "world");
     std_error_append(error, "!!!");
 
@@ -189,7 +178,6 @@ TEST(std_error, dump_formatted) {
                        "!!!"   "\n");
 
     free(dump);
-    std_error_free_safe(&error);
 }
 
 int main(int argc, char *argv[]) {

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "std/unique.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,6 +34,8 @@ size_t std_error_count(std_error_t *error);
 
 void std_error_free(std_error_t *error);
 void std_error_free_safe(std_error_t **error);
+
+declare_std_unique_ptr_for_type(std_error_t, std_error_free_safe)
 
 #ifdef __cplusplus
 }
