@@ -1,0 +1,47 @@
+name: Unit tests
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            cc: "gcc",
+            cxx: "g++",
+          }
+        - {
+            name: "Ubuntu Latest Clang",
+            os: ubuntu-latest,
+            cc: "clang",
+            cxx: "clang++",
+          }
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies on Ubuntu
+        if: startsWith(matrix.config.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install ${{ matrix.config.cc }} ninja-build meson libgtest-dev
+
+      - name: Meson configure
+        env:
+          CC:  ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+        run: |
+          meson builddir
+
+      - name: Run tests
+        run: |
+          meson test -C builddir
