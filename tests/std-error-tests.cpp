@@ -116,6 +116,8 @@ TEST(std_error, log) {
                    "   - hello" "\n"
                    "   - world" "\n"
                    "   - !!!"   "\n");
+
+    EXPECT_DEBUG_DEATH(std_error_log(nullptr), ".*");
 }
 
 TEST(std_error, log_to) {
@@ -132,6 +134,8 @@ TEST(std_error, log_to) {
                    "   - hello" "\n"
                    "   - world" "\n"
                    "   - !!!"   "\n");
+
+    EXPECT_DEBUG_DEATH(std_error_log_to(nullptr, stdout), ".*");
 }
 
 TEST(std_error, log_formatted) {
@@ -147,6 +151,8 @@ TEST(std_error, log_formatted) {
     EXPECT_EQ(log, "hello" "\n"
                    "world" "\n"
                    "!!!"   "\n");
+
+    EXPECT_DEBUG_DEATH(std_error_log_formatted(nullptr, test_std_error_log_formatter), ".*");
 }
 
 TEST(std_error, dump) {
@@ -156,13 +162,13 @@ TEST(std_error, dump) {
     std_error_append(error, "!!!");
 
     char *dump = std_error_dump(error);
-
     EXPECT_STREQ(dump, "[error]"    "\n"
                        "   - hello" "\n"
                        "   - world" "\n"
                        "   - !!!"   "\n");
-
     free(dump);
+
+    EXPECT_DEBUG_DEATH(std_error_dump(nullptr), ".*");
 }
 
 TEST(std_error, dump_formatted) {
@@ -172,12 +178,12 @@ TEST(std_error, dump_formatted) {
     std_error_append(error, "!!!");
 
     char *dump = std_error_dump_formatted(error, test_std_error_dump_formatter);
-
     EXPECT_STREQ(dump, "hello" "\n"
                        "world" "\n"
                        "!!!"   "\n");
-
     free(dump);
+
+    EXPECT_DEBUG_DEATH(std_error_dump_formatted(nullptr, test_std_error_dump_formatter), ".*");
 }
 
 int main(int argc, char *argv[]) {
