@@ -1,5 +1,5 @@
-#ifndef __STD_ERROR_H__
-#define __STD_ERROR_H__
+#ifndef STD_ERROR_H
+#define STD_ERROR_H
 
 #include <stddef.h>
 #include <stdio.h>
@@ -37,4 +37,4 @@ void std_error_free_safe(std_error_t **error);
 }
 #endif
 
-#endif /* __STD_ERROR_H__ */
+#endif /* STD_ERROR_H */

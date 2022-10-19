@@ -6,13 +6,13 @@ includes = [
     '../include'
 ]
 
-stderror_sources = [
-    '../src/stderror.c',
-    'stderror-tests.cpp'
+std_error_sources = [
+    '../src/std-error.c',
+    'std-error-tests.cpp'
 ]
 
-stderror_tests = executable('stderror-tests', stderror_sources,
+std_error_tests = executable('std-error-tests', std_error_sources,
                              include_directories: includes,
                              dependencies: dependencies)
 
-test('stderror-tests', stderror_tests)
+test('std-error-tests', std_error_tests)

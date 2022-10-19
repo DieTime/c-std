@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "stderror.h"
+#include "std/error.h"
 
 struct std_error_t {
     char **messages;
@@ -64,16 +64,14 @@ std_error_t *std_error_append(std_error_t *error, const char *message)
 
     if (error->size == error->capacity) {
         size_t next_capacity = error->capacity ? error->capacity * 2 : 8;
-        char **messages_backup = error->messages;
+        char **next_messages = realloc(error->messages, next_capacity * sizeof(char *));
 
-        error->messages = realloc(error->messages, next_capacity * sizeof(char *));
-        if (!error->messages) {
+        if (!next_messages) {
             fprintf(stderr, "[stderror] couldn't append an error (realloc failed)" "\n");
-
-            error->messages = messages_backup;
             return error;
         }
 
+        error->messages = next_messages;
         error->capacity = next_capacity;
     }
 
@@ -155,11 +153,12 @@ size_t std_error_count(std_error_t *error)
 void std_error_free(std_error_t *error) {
     assert(error && "attempt to free an error, but the error is null");
 
-    for (size_t idx = 0; idx < error->size; idx++)
-        free(error->messages[idx]);
+    if (error->messages) {
+        for (size_t idx = 0; idx < error->size; idx++)
+            free(error->messages[idx]);
 
-    if (error->messages)
         free(error->messages);
+    }
 
     free(error);
 }
